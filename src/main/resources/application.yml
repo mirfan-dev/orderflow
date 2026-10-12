@@ -34,3 +34,26 @@ jwt:
   expiration:
     access: 900000
     refresh: 86400000
+
+
+
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: order-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.axlero.orderflow.dto"
+        spring.json.value.default.type: com.axlero.orderflow.dto.TradeEvent
+
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+app:
+  kafka:
+    enabled: true
+

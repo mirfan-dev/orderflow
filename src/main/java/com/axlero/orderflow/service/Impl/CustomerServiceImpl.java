@@ -3,9 +3,12 @@ package com.axlero.orderflow.service.Impl;
 
 import com.axlero.orderflow.dto.CustomerDtos;
 import com.axlero.orderflow.entity.Customer;
+import com.axlero.orderflow.entity.Role;
 import com.axlero.orderflow.repository.CustomerRepository;
+import com.axlero.orderflow.repository.RoleRepository;
 import com.axlero.orderflow.service.AuthService;
 import com.axlero.orderflow.service.CustomerService;
+import com.axlero.orderflow.util.AppConstant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -23,6 +26,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final ModelMapper mapper;
     private final AuthService authService;
     private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
 
 
@@ -35,6 +39,18 @@ public class CustomerServiceImpl implements CustomerService {
         }
         Customer customer = mapper.map(customerDto, Customer.class);
         customer.setPassword(passwordEncoder.encode(customerDto.getPassword()));
+        if (customer.getRoles() == null) {
+            customer.setRoles(new HashSet<>());
+        }
+        if (customer.getRoles().isEmpty()) {
+            Role defaultRole = roleRepository.findFirstByRoleName("ROLE_USER")
+                    .orElseGet(() -> roleRepository.findFirstByRoleName("ROLE_" + AppConstant.GUEST_ROLE)
+                            .orElseGet(() -> roleRepository.save(Role.builder()
+                                    .roleId(UUID.randomUUID().toString())
+                                    .roleName("ROLE_USER")
+                                    .build())));
+            customer.getRoles().add(defaultRole);
+        }
 
         Customer savedCustomer = customerRepository.save(customer);
 
