@@ -6,8 +6,10 @@ import com.axlero.orderflow.repository.CustomerRepository;
 import com.axlero.orderflow.service.AuthService;
 import com.axlero.orderflow.service.EmailService;
 import com.axlero.orderflow.util.OtpUtil;
+import io.jsonwebtoken.security.Password;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -19,6 +21,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final EmailService emailService;
     private final CustomerRepository customerRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -101,7 +104,7 @@ public class AuthServiceImpl implements AuthService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "OTP expired");
         }
 
-//        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setPassword(passwordEncoder.encode(newPassword));
         user.setResetOtp(null);
         user.setResetOtpExpiredAt(null);
 
