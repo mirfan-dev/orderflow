@@ -4,6 +4,7 @@ package com.axlero.orderflow.service.Impl;
 import com.axlero.orderflow.dto.CustomerDtos;
 import com.axlero.orderflow.entity.Customer;
 import com.axlero.orderflow.repository.CustomerRepository;
+import com.axlero.orderflow.service.AuthService;
 import com.axlero.orderflow.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,8 @@ import java.util.UUID;
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final ModelMapper mapper;
+    private final AuthService authService;
+
 
 
 
@@ -31,6 +34,13 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = mapper.map(customerDto, Customer.class);
 
         Customer savedCustomer = customerRepository.save(customer);
+
+        // Attempt OTP send gracefully without crashing if mail server is unconfigured
+        try {
+            authService.sendOtp(savedCustomer.getEmail());
+        } catch (Exception e) {
+            log.warn("[CustomerService] User created successfully, but OTP email dispatch skipped/failed: {}", e.getMessage());
+        }
 
         return mapper.map(savedCustomer, CustomerDtos.class);
     }
