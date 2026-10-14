@@ -56,4 +56,4 @@ _To fill in: FPS for Canvas vs DOM at 10/s, 50/s, 100/s, 200/s._
 - [x] Week 2 — Streaming check, no perceived lag
 - [x] Week 3 — Canvas vs DOM Order Book UI + benchmark
 - [x] Week 4 — Depth of Market visualizer
-- [ ] Live feed integration (pending Member 3's backend)
+
