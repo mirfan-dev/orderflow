@@ -102,7 +102,7 @@ public class OrderEventHandler implements EventHandler<OrderEvent> {
                 "timestamp", System.currentTimeMillis()
         );
         if (messagingTemplate != null) {
-            messagingTemplate.convertAndSend("/topic/orderbook", payload);
+            messagingTemplate.convertAndSend("/topic/orderbook", (Object) payload);
         }
         // Broadcast to SSE listeners
         for (Consumer<Map<String, Object>> listener : sseOrderBookListeners) {
@@ -191,7 +191,7 @@ public class OrderEventHandler implements EventHandler<OrderEvent> {
                         "asks", topAsksSnapshot,
                         "timestamp", System.currentTimeMillis()
                 );
-                messagingTemplate.convertAndSend("/topic/orderbook", payload);
+                messagingTemplate.convertAndSend("/topic/orderbook", (Object)payload);
             }
             if (orderPersistenceService != null) {
                 orderPersistenceService.cancelOrder(orderId);
